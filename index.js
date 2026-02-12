@@ -21,15 +21,19 @@ const client = new Client({
 
 const KISS_GIFS = {
   hetero: [
-    "https://media.tenor.com/2roX3uxz_68AAAAC/anime-kiss.gif",
+    "https://i.imgur.com/8XbqTqS.gif",
+    "https://i.imgur.com/ZQZSWrt.gif"
   ],
   lesbica: [
-    "https://media.tenor.com/Z6gmDPeM6dgAAAAC/anime-lesbian-kiss.gif",
+    "https://i.imgur.com/j6oXk7J.gif",
+    "https://i.imgur.com/QYk9mOq.gif"
   ],
   gay: [
-    "https://media.tenor.com/3wvXbYpY0QMAAAAC/anime-boy-kiss.gif",
+    "https://i.imgur.com/y3m6XGk.gif",
+    "https://i.imgur.com/1lXKpQm.gif"
   ],
 };
+
 
 const TYPES = ["hetero", "lesbica", "gay"];
 
