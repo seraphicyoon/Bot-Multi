@@ -67,6 +67,10 @@ const KISS_GIFS = {
   ],
 };
 
+const REJECT_GIFS = [
+  "https://i.imgur.com/vMlK7oJ.gif"
+];
+
 function random(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -80,7 +84,10 @@ const commands = [
     .setName("kiss")
     .setDescription("Besa a alguien 💋")
     .addUserOption((option) =>
-      option.setName("usuario").setDescription("¿A quién quieres besar?").setRequired(true)
+      option
+        .setName("usuario")
+        .setDescription("¿A quién quieres besar?")
+        .setRequired(true)
     )
     .addStringOption((option) =>
       option
@@ -114,6 +121,7 @@ client.once("ready", async () => {
 ================================ */
 
 client.on("interactionCreate", async (interaction) => {
+
   /* --- Slash Command --- */
   if (interaction.isChatInputCommand()) {
     if (interaction.commandName !== "kiss") return;
@@ -129,7 +137,6 @@ client.on("interactionCreate", async (interaction) => {
     }
 
     const gif = random(KISS_GIFS[tipo]);
-
     const count = addKiss(interaction.user.id, usuario.id);
 
     const embed = new EmbedBuilder()
@@ -173,9 +180,9 @@ client.on("interactionCreate", async (interaction) => {
       });
     }
 
+    /* 💖 DEVOLVER BESO */
     if (action === "back") {
       const count = addKiss(autorId, targetId);
-
       const gif = random(KISS_GIFS[tipo]);
 
       const embed = new EmbedBuilder()
@@ -191,10 +198,20 @@ client.on("interactionCreate", async (interaction) => {
       });
     }
 
+    /* 💔 RECHAZAR */
     if (action === "reject") {
+
+      const sadGif = random(REJECT_GIFS);
+
+      const embed = new EmbedBuilder()
+        .setDescription(
+          `💔 **${interaction.user.username}** rechazó el beso...\n\n` +
+          `Qué triste momento...`
+        )
+        .setImage(sadGif);
+
       await interaction.update({
-        content: `💔 **${interaction.user.username}** rechazó el beso...`,
-        embeds: [],
+        embeds: [embed],
         components: [],
       });
     }
