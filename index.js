@@ -49,13 +49,13 @@ function addKiss(id1, id2) {
 ================================ */
 
 const KISS_GIFS = {
-  lesbica: [
+  yuri: [
     "https://i.imgur.com/YiKMa5K.gif",
     "https://i.imgur.com/L8uOlIk.gif",
     "https://i.imgur.com/5uWZQHD.gif",
     "https://i.imgur.com/5FwrWiG.gif",
   ],
-  gay: [
+  yaoi: [
     "https://i.imgur.com/y3m6XGk.gif",
     "https://i.imgur.com/1lXKpQm.gif",
   ],
@@ -81,8 +81,8 @@ const commands = [
         .setName("tipo")
         .setDescription("Tipo de pareja")
         .addChoices(
-          { name: "Lésbica", value: "lesbica" },
-          { name: "Gay", value: "gay" }
+          { name: "Yuri", value: "yuri" },
+          { name: "Yaoi", value: "yaoi" }
         )
         .setRequired(true)
     ),
