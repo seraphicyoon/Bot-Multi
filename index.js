@@ -86,12 +86,12 @@ const KISS_GIFS = {
 // ✅ Pon aquí tus GIFs de abrazos (puedes cambiarlos por los tuyos)
 const HUG_GIFS = {
   yuri: [
-    "https://i.imgur.com/2fKQy3M.gif",
-    "https://i.imgur.com/7xJb7Q4.gif",
+    "https://i.imgur.com/ngMo9CD.gif",
+    "https://i.imgur.com/2c3VtcJ.gif",
   ],
   yaoi: [
-    "https://i.imgur.com/Jy5d0xv.gif",
-    "https://i.imgur.com/wKxq2y1.gif",
+    "https://i.imgur.com/VWDJxHg.gif",
+    "https://i.imgur.com/UEeB0GF.gif",
   ],
 };
 
