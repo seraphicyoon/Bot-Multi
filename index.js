@@ -62,8 +62,13 @@ const KISS_GIFS = {
     "https://i.imgur.com/qvntOTe.gif",
   ],
   yaoi: [
-    "https://i.imgur.com/y3m6XGk.gif",
-    "https://i.imgur.com/1lXKpQm.gif",
+    "https://i.imgur.com/nkmoNDT.gif",
+    "https://i.imgur.com/CKQevBV.gif",
+     "https://i.imgur.com/09uQbM4.gif",
+    "https://i.imgur.com/eJm3z7d.gif",
+    "https://i.imgur.com/sxuRsDu.gif",
+    "https://i.imgur.com/e6pcpUK.gif",
+    "https://i.imgur.com/2UJubb8.gif",
   ],
 };
 
