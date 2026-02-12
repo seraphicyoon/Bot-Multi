@@ -1,4 +1,5 @@
 require("dotenv").config();
+const fs = require("fs");
 const {
   Client,
   GatewayIntentBits,
@@ -16,26 +17,47 @@ const client = new Client({
 });
 
 /* ===============================
+   SISTEMA DE CONTADOR
+================================ */
+
+const DATA_FILE = "./kisses.json";
+
+let kissData = {};
+
+if (fs.existsSync(DATA_FILE)) {
+  kissData = JSON.parse(fs.readFileSync(DATA_FILE));
+}
+
+function saveData() {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(kissData, null, 2));
+}
+
+function getPairKey(id1, id2) {
+  return [id1, id2].sort().join("_");
+}
+
+function addKiss(id1, id2) {
+  const key = getPairKey(id1, id2);
+  if (!kissData[key]) kissData[key] = 0;
+  kissData[key]++;
+  saveData();
+  return kissData[key];
+}
+
+/* ===============================
    GIFS
 ================================ */
 
 const KISS_GIFS = {
-  hetero: [
-    "https://i.imgur.com/8XbqTqS.gif",
-    "https://i.imgur.com/ZQZSWrt.gif"
-  ],
   lesbica: [
     "https://i.imgur.com/YiKMa5K.gif",
-    "https://i.imgur.com/L8uOlIk.gif"
+    "https://i.imgur.com/L8uOlIk.gif",
   ],
   gay: [
     "https://i.imgur.com/y3m6XGk.gif",
-    "https://i.imgur.com/1lXKpQm.gif"
+    "https://i.imgur.com/1lXKpQm.gif",
   ],
 };
-
-
-const TYPES = ["hetero", "lesbica", "gay"];
 
 function random(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -50,33 +72,23 @@ const commands = [
     .setName("kiss")
     .setDescription("Besa a alguien 💋")
     .addUserOption((option) =>
-      option
-        .setName("usuario")
-        .setDescription("¿A quién quieres besar?")
-        .setRequired(true)
+      option.setName("usuario").setDescription("¿A quién quieres besar?").setRequired(true)
     )
     .addStringOption((option) =>
       option
         .setName("tipo")
         .setDescription("Tipo de pareja")
         .addChoices(
-          { name: "Random", value: "random" },
-          { name: "Heterosexual", value: "hetero" },
           { name: "Lésbica", value: "lesbica" },
           { name: "Gay", value: "gay" }
         )
-        .setRequired(false)
+        .setRequired(true)
     ),
 ].map((cmd) => cmd.toJSON());
-
-/* ===============================
-   REGISTRO GLOBAL (TODOS LOS SERVERS)
-================================ */
 
 async function registerCommands() {
   const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
-  // ✅ GLOBAL: sirve para TODOS los servidores
   await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), {
     body: commands,
   });
@@ -84,17 +96,13 @@ async function registerCommands() {
   console.log("✅ Comando /kiss registrado GLOBALMENTE");
 }
 
-/* ===============================
-   READY
-================================ */
-
 client.once("ready", async () => {
   console.log(`✅ Bot conectado como ${client.user.tag}`);
   await registerCommands();
 });
 
 /* ===============================
-   INTERACTIONS
+   INTERACCIONES
 ================================ */
 
 client.on("interactionCreate", async (interaction) => {
@@ -103,7 +111,7 @@ client.on("interactionCreate", async (interaction) => {
     if (interaction.commandName !== "kiss") return;
 
     const usuario = interaction.options.getUser("usuario", true);
-    const tipoInput = interaction.options.getString("tipo") || "random";
+    const tipo = interaction.options.getString("tipo", true);
 
     if (usuario.bot || usuario.id === interaction.user.id) {
       return interaction.reply({
@@ -112,27 +120,21 @@ client.on("interactionCreate", async (interaction) => {
       });
     }
 
-    const tipo = tipoInput === "random" ? random(TYPES) : tipoInput;
+    const gif = random(KISS_GIFS[tipo]);
 
-    const pool = KISS_GIFS[tipo] || [];
-    if (pool.length === 0) {
-      return interaction.reply({
-        content: `⚠️ No tengo GIFs para el tipo **${tipo}** todavía.`,
-        ephemeral: true,
-      });
-    }
-
-    const gif = random(pool);
+    const count = addKiss(interaction.user.id, usuario.id);
 
     const embed = new EmbedBuilder()
-      .setDescription(`💋 **${interaction.user.username}** besa a **${usuario.username}**`)
+      .setDescription(
+        `💋 **${interaction.user.username}** besa a **${usuario.username}**\n\n` +
+        `💞 Se han besado **${count}** veces.`
+      )
       .setImage(gif)
       .setFooter({ text: "¿Corresponderás el beso?" });
 
-    // Guardamos el ID del “besador” y el “besado” para controlar quién puede tocar botones
     const botones = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId(`kiss_back_${interaction.user.id}_${usuario.id}`)
+        .setCustomId(`kiss_back_${interaction.user.id}_${usuario.id}_${tipo}`)
         .setLabel("💋 Besar de vuelta")
         .setStyle(ButtonStyle.Success),
 
@@ -151,29 +153,37 @@ client.on("interactionCreate", async (interaction) => {
   /* --- Botones --- */
   if (interaction.isButton()) {
     const parts = interaction.customId.split("_");
-    // customId: kiss_back_<autorId>_<targetId>  o  kiss_reject_<autorId>_<targetId>
-    const action = parts[0]; // "kiss"
-    const type = parts[1];   // "back" o "reject"
+    const action = parts[1];
     const autorId = parts[2];
     const targetId = parts[3];
+    const tipo = parts[4];
 
-    if (action !== "kiss") return;
-
-    // ✅ Solo la persona besada (targetId) puede responder
     if (interaction.user.id !== targetId) {
       return interaction.reply({
-        content: "⚠️ Solo la persona a la que besaron puede responder.",
+        content: "⚠️ Solo la persona besada puede responder.",
         ephemeral: true,
       });
     }
 
-    if (type === "back") {
+    if (action === "back") {
+      const count = addKiss(autorId, targetId);
+
+      const gif = random(KISS_GIFS[tipo]);
+
+      const embed = new EmbedBuilder()
+        .setDescription(
+          `💖 **${interaction.user.username}** devolvió el beso!\n\n` +
+          `💞 Ahora se han besado **${count}** veces.`
+        )
+        .setImage(gif);
+
       await interaction.update({
-        content: `💖 **${interaction.user.username}** devolvió el beso a **${client.users.cache.get(autorId)?.username || "alguien"}**!`,
-        embeds: [],
+        embeds: [embed],
         components: [],
       });
-    } else if (type === "reject") {
+    }
+
+    if (action === "reject") {
       await interaction.update({
         content: `💔 **${interaction.user.username}** rechazó el beso...`,
         embeds: [],
