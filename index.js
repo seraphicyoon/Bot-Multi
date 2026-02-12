@@ -50,10 +50,16 @@ function addKiss(id1, id2) {
 
 const KISS_GIFS = {
   yuri: [
-    "https://i.imgur.com/YiKMa5K.gif",
-    "https://i.imgur.com/L8uOlIk.gif",
-    "https://i.imgur.com/5uWZQHD.gif",
+    "https://i.imgur.com/7vf0xuZ.gif",
+    "https://i.imgur.com/8AUqDDZ.gif",
+    "https://i.imgur.com/a8wvlp2.gif",
     "https://i.imgur.com/5FwrWiG.gif",
+    "https://i.imgur.com/oJDGoDA.gif",
+    "https://i.imgur.com/2EFQt3k.gif",
+    "https://i.imgur.com/glyexpN.gif",
+    "https://i.imgur.com/rIAevRo.gif",
+    "https://i.imgur.com/uNtTSXO.gif",
+    "https://i.imgur.com/qvntOTe.gif",
   ],
   yaoi: [
     "https://i.imgur.com/y3m6XGk.gif",
