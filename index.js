@@ -52,6 +52,8 @@ const KISS_GIFS = {
   lesbica: [
     "https://i.imgur.com/YiKMa5K.gif",
     "https://i.imgur.com/L8uOlIk.gif",
+    "https://i.imgur.com/5uWZQHD.gif",
+    "https://i.imgur.com/5FwrWiG.gif",
   ],
   gay: [
     "https://i.imgur.com/y3m6XGk.gif",
